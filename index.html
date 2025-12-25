@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Новым Годом!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <audio src="NY-Nastya-Sound.mp3" autoplay></audio>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(180deg, #0a1929 0%, #1a2a42 50%, #0d1b2a 100%);
+            color: #fff;
+            touch-action: manipulation;
+            position: relative;
+        }
+
+        /* Секции */
+        .section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .section.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Блок 1: Привет на разных языках */
+        .hello-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hello-main {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .hello-orbit {
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0;
+            color: #87ceeb;
+            text-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
+            font-weight: 500;
+            transform-origin: center;
+            will-change: transform;
+        }
+
+        /* Блок 2: Четверостишия */
+        .poem-container {
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 2rem;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .poem-stanza {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .poem-stanza.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .poem-line {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            color: #f0f8ff;
+            text-shadow: 0 0 20px rgba(240, 248, 255, 0.5);
+        }
+
+        .poem-navigation {
+            position: fixed;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 50;
+        }
+
+        .poem-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .poem-dot.active {
+            background: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Блок 3: Финальное поздравление */
+        .final-container {
+            text-align: center;
+            max-width: 900px;
+            padding: 0 2rem;
+        }
+
+        .final-title {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: scale(0.8);
+            color: #ffd700;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+        }
+
+        .final-text {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+            color: #f0f8ff;
+        }
+
+        /* Снег */
+        .snowflake {
+            position: absolute;
+            color: #fff;
+            font-size: 1rem;
+            opacity: 0.8;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Индикатор прокрутки */
+        .scroll-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            z-index: 100;
+            animation: bounce 2s infinite;
+            text-align: center;
+        }
+
+        .mobile-hint {
+            display: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hello-main { font-size: 4rem; }
+            .hello-orbit { font-size: 1rem; }
+            .poem-line { font-size: 1rem; }
+            .final-title { font-size: 2.5rem; }
+            .final-text { font-size: 1.3rem; }
+            
+            .mobile-hint {
+                display: block;
+                margin-top: 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .poem-container {
+                padding: 0 1rem;
+            }
+            
+            .poem-navigation {
+                left: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hello-main { font-size: 3rem; }
+            .poem-line { font-size: 1rem; }
+            .final-title { font-size: 2rem; }
+            .final-text { font-size: 1.1rem; }
+            
+            .poem-container {
+                padding: 0 0.5rem;
+            }
+            
+            .poem-navigation {
+                left: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Блок 1: Привет на разных языках -->
+    <section class="section" id="section1">
+        <div class="hello-container">
+            <h1 class="hello-main">Привет!</h1>
+            <!-- Слова на разных языках будут добавлены через JavaScript -->
+        </div>
+    </section>
+
+    <!-- Блок 2: Четверостишия -->
+    <section class="section" id="section2">
+        <div class="poem-container">
+            <!-- Четверостишие 1 -->
+            <div class="poem-stanza active" data-stanza="1">
+                <div class="poem-line">Мы вроде бы и общались с тобой почти полгода, 📅</div>
+                <div class="poem-line">Но я пока так и не понял, 🤔</div>
+                <div class="poem-line">Что тебе нравится больше 
+                    <br />чем букавки и дизайн, 💅</div>
+                <div class="poem-line">По этому мой подарок 
+                    <br />как будто бы и не мог быть другим 🎁</div>
+            </div>
+            
+            <!-- Четверостишие 2 -->
+            <div class="poem-stanza" data-stanza="2">
+                <div class="poem-line">Честно говоря я переживал, 🫥</div>
+                <div class="poem-line">Что подарю тебе то что у тебя уже есть, 🫠</div>
+                <div class="poem-line">Но цель была попасть хотя бы во что-то одно, 🎯</div>
+                <div class="poem-line">так что пришлось жульничать
+                    <br />и использовать несколько попыток 😅</div>
+            </div>
+            
+            <!-- Четверостишие 3 -->
+            <div class="poem-stanza" data-stanza="3">
+                <div class="poem-line">И даже если по итогу я не смог 
+                    <br />попасть ни одним вариантом,😌</div>
+                <div class="poem-line">И вместо этого совершил 
+                    <br />маленький акт аннексии  
+                    <br />твоего свободного пространства 
+                    <br />набором ненужной макулатуры 💂</div>
+                <div class="poem-line">У тебя как минимум нету... 😶</div>
+                <div class="poem-line">Такой модной открытки 
+                    <br />с такими милыми шриланскими рыбами 😄🐟 </div>
+            </div>
+            
+            <!-- Четверостишие 4 -->
+            <div class="poem-stanza" data-stanza="4">
+                <div class="poem-line">Спасибо тебе за полноценную 
+                    <br />и счастливую семью Борисов, 💑</div>
+                <div class="poem-line">А также за десятки если не сотню
+                    <br />часов совместных подкастов. 🎤</div>
+                <div class="poem-line">Я рад что этот хоть и тяжёлый год 🙉</div>
+                <div class="poem-line">Нас с тобой познакомил ❤️</div>
+            </div>
+            
+            <div class="poem-navigation">
+                <div class="poem-dot active" data-stanza="1"></div>
+                <div class="poem-dot" data-stanza="2"></div>
+                <div class="poem-dot" data-stanza="3"></div>
+                <div class="poem-dot" data-stanza="4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок 3: Финальное поздравление -->
+    <section class="section" id="section3">
+        <div class="final-container">
+            <h2 class="final-title">С наступающим
+                <br />2026 Годом!</h2>
+            <p class="final-text">Пусть новый год принесёт тебе 
+                <br />много радости, тепла и счастья!</p>
+            <p class="final-text">Пусть сбудутся все твои мечты и желания!</p>
+            <p class="final-text">From Vova (2025-2026) ❤️</p>
+        </div>
+    </section>
+
+    <div class="scroll-hint">
+        Прокрутите колесико мыши ↓
+        <div class="mobile-hint">или свайпните вверх/вниз</div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let currentSection = 0;
+        let currentStanza = 1;
+        const sections = document.querySelectorAll('.section');
+        const totalSections = sections.length;
+        let isScrolling = false;
+        let orbitAnimation; // Для хранения анимации орбит
+
+        // Слова "привет" на 15 языках
+        const helloTranslations = [
+            { text: 'Hello', x: 20, y: 15, angle: -15 },
+            { text: 'Hola', x: 70, y: 20, angle: 20 },
+            { text: 'Bonjour', x: 80, y: 60, angle: -10 },
+            { text: 'Ciao', x: 15, y: 70, angle: 15 },
+            { text: 'Guten Tag', x: 60, y: 80, angle: -20 },
+            { text: 'Konnichiwa', x: 25, y: 85, angle: 25 },
+            { text: 'Namaste', x: 75, y: 30, angle: -5 },
+            { text: 'Salaam', x: 10, y: 40, angle: 30 },
+            { text: 'Ni hao', x: 85, y: 50, angle: -25 },
+            { text: 'Privet', x: 40, y: 10, angle: 10 },
+            { text: 'Ahoj', x: 55, y: 90, angle: -30 },
+            { text: 'Merhaba', x: 30, y: 5, angle: 20 },
+            { text: 'Shalom', x: 65, y: 15, angle: -12 },
+            { text: 'Sawubona', x: 20, y: 60, angle: 18 },
+            { text: 'Olá', x: 75, y: 40, angle: -22 }
+        ];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            initSections();
+            createHelloOrbits();
+            createSnow();
+            setupScrollHandling();
+            setupPoemNavigation();
+            showSection(0);
+        });
+
+        function initSections() {
+            sections.forEach((section, index) => {
+                section.style.top = '0';
+                section.style.left = '0';
+            });
+        }
+
+        function createHelloOrbits() {
+            const container = document.querySelector('.hello-container');
+            
+            helloTranslations.forEach((item, index) => {
+                const orbitElement = document.createElement('div');
+                orbitElement.className = 'hello-orbit';
+                orbitElement.textContent = item.text;
+                orbitElement.style.left = item.x + '%';
+                orbitElement.style.top = item.y + '%';
+                orbitElement.style.transform = `rotate(${item.angle}deg)`;
+                orbitElement.dataset.index = index;
+                container.appendChild(orbitElement);
+            });
+        }
+
+        function setupPoemNavigation() {
+            const dots = document.querySelectorAll('.poem-dot');
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const stanzaNum = parseInt(dot.dataset.stanza);
+                    showStanza(stanzaNum);
+                });
+            });
+        }
+
+        function showStanza(stanzaNum) {
+            if (currentSection !== 1) return;
+            
+            // Скрыть все строфы
+            document.querySelectorAll('.poem-stanza').forEach(stanza => {
+                stanza.classList.remove('active');
+            });
+            
+            // Показать выбранную строфу
+            const targetStanza = document.querySelector(`[data-stanza="${stanzaNum}"]`);
+            if (targetStanza) {
+                targetStanza.classList.add('active');
+                
+                // Анимировать строки
+                const lines = targetStanza.querySelectorAll('.poem-line');
+                gsap.fromTo(lines, 
+                    { opacity: 0, y: 30 },
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 0.8,
+                        stagger: 0.3,
+                        ease: "power2.out"
+                    }
+                );
+            }
+            
+            // Обновить навигацию
+            document.querySelectorAll('.poem-dot').forEach(dot => {
+                dot.classList.remove('active');
+            });
+            document.querySelector(`[data-stanza="${stanzaNum}"].poem-dot`).classList.add('active');
+            
+            currentStanza = stanzaNum;
+        }
+
+        function setupScrollHandling() {
+            window.addEventListener('wheel', handleWheel, { passive: false });
+            window.addEventListener('keydown', handleKeydown);
+            
+            // Мобильные свайпы
+            let touchStartY = 0;
+            let touchStartX = 0;
+            
+            window.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+                touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+            
+            window.addEventListener('touchend', (e) => {
+                const touchEndY = e.changedTouches[0].clientY;
+                const touchEndX = e.changedTouches[0].clientX;
+                const diffY = touchStartY - touchEndY;
+                const diffX = Math.abs(touchStartX - touchEndX);
+                
+                // Проверяем, что это вертикальный свайп, а не горизонтальный
+                if (Math.abs(diffY) > 50 && diffX < 100) {
+                    if (diffY > 0) {
+                        nextSection();
+                    } else {
+                        prevSection();
+                    }
+                }
+            }, { passive: true });
+        }
+
+        function handleWheel(e) {
+            e.preventDefault();
+            
+            if (isScrolling) return;
+            
+            isScrolling = true;
+            
+            // В блоке 2 прокрутка переключает строфы
+            if (currentSection === 1) {
+                if (e.deltaY > 0) {
+                    nextStanza();
+                } else {
+                    prevStanza();
+                }
+            } else {
+                if (e.deltaY > 0) {
+                    nextSection();
+                } else {
+                    prevSection();
+                }
+            }
+            
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (currentSection === 1) {
+                    nextStanza();
+                } else {
+                    nextSection();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (currentSection === 1) {
+                    prevStanza();
+                } else {
+                    prevSection();
+                }
+            }
+        }
+
+        function nextStanza() {
+            if (currentStanza < 4) {
+                showStanza(currentStanza + 1);
+            } else {
+                nextSection();
+            }
+        }
+
+        function prevStanza() {
+            if (currentStanza > 1) {
+                showStanza(currentStanza - 1);
+            } else {
+                prevSection();
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function showSection(index) {
+            sections.forEach((section, i) => {
+                section.classList.remove('active');
+            });
+            
+            sections[index].classList.add('active');
+            
+            // Скрыть подсказку о прокрутке на последнем блоке
+            const scrollHint = document.querySelector('.scroll-hint');
+            if (index === totalSections - 1) {
+                scrollHint.style.opacity = '0';
+            } else {
+                scrollHint.style.opacity = '1';
+            }
+            
+            // Запустить анимации для текущего блока
+            animateSection(index);
+        }
+
+        function animateSection(index) {
+            switch(index) {
+                case 0:
+                    animateHelloBlock();
+                    break;
+                case 1:
+                    animatePoemBlock();
+                    break;
+                case 2:
+                    animateFinalBlock();
+                    break;
+            }
+        }
+
+        function animateHelloBlock() {
+            const tl = gsap.timeline();
+            
+            // Анимация главного слова "Привет"
+            tl.to('.hello-main', {
+                opacity: 1,
+                scale: 1,
+                duration: 1.5,
+                ease: "back.out(1.7)"
+            });
+            
+            // Анимация орбитальных слов
+            const orbits = document.querySelectorAll('.hello-orbit');
+            orbits.forEach((orbit, index) => {
+                tl.to(orbit, {
+                    opacity: 0.8,
+                    duration: 0.6,
+                    ease: "power2.out"
+                }, `-=${0.55 - index * 0.03}`);
+            });
+            
+            // Остановить предыдущую анимацию если есть
+            if (orbitAnimation) {
+                orbitAnimation.kill();
+            }
+            
+            // Плавное вращение орбит вокруг центра
+            orbitAnimation = gsap.to('.hello-orbit', {
+                rotation: "+=360",
+                duration: 30,
+                repeat: -1,
+                ease: "none",
+                stagger: 2
+            });
+        }
+
+        function animatePoemBlock() {
+            // Показать первую строфу
+            showStanza(1);
+        }
+
+        function animateFinalBlock() {
+            const tl = gsap.timeline();
+            
+            tl.to('.final-title', {
+                opacity: 1,
+                scale: 1,
+                duration: 1.5,
+                ease: "back.out(1.7)"
+            })
+            .to('.final-text', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.3,
+                ease: "power2.out"
+            }, "-=1");
+            
+            // Усилить эффект снега
+            intensifySnow();
+        }
+
+        function createSnow() {
+            const snowCount = 40;
+            
+            for (let i = 0; i < snowCount; i++) {
+                createSnowflake();
+            }
+        }
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
+            snowflake.style.left = Math.random() * 100 + '%';
+            snowflake.style.top = '-10px';
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+            snowflake.style.opacity = Math.random() * 0.6 + 0.2;
+            
+            document.body.appendChild(snowflake);
+            
+            const duration = Math.random() * 10 + 10;
+            
+            gsap.to(snowflake, {
+                y: window.innerHeight + 100,
+                x: Math.random() * 200 - 100,
+                rotation: Math.random() * 360,
+                duration: duration,
+                ease: "none",
+                onComplete: () => {
+                    snowflake.remove();
+                    createSnowflake();
+                }
+            });
+        }
+
+        function intensifySnow() {
+            // Добавить дополнительные снежинки в финальном блоке
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createSnowflake, i * 100);
+            }
+        }
+
+        // Инициализировать анимацию первого блока
+        setTimeout(() => {
+            showSection(0);
+        }, 500);
+    </script>
+</body>
+</html>
